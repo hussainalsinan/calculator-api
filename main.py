@@ -31,3 +31,7 @@ def add(a: str, b: str):
             detail="Both 'a' and 'b' must be numbers."
         )
     return {"result": a + b}
+
+@app.get("/subtract/{a}/{b}")
+def subtract(a: float, b: float):
+    return {"result": a - b}
