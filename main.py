@@ -34,9 +34,12 @@ def multiply(a: float, b: float):
 
 @app.get("/divide/{a}/{b}")
 def divide(a: float, b: float):
-    """Divides a by b. Returns a 400 error if b is zero."""
+    """Divides a by b. Returns a 422 error if b is zero."""
     if b == 0:
-        raise HTTPException(status_code=400, detail="Division by zero is not allowed.")
+        raise HTTPException(
+            status_code=422,
+            detail="Division by zero is not allowed."
+        )
     return {"operation": "divide", "a": a, "b": b, "result": a / b}
 
 # CUSTOM ENDPOINTS
@@ -54,5 +57,5 @@ def square(a: float):
 
 @app.get("/power/{a}/{b}")
 def power(a: float, b: float):
-    """Calculates a to the power of b."""
+    """Calculates a raised to the power of b."""
     return {"operation": "power", "base": a, "exponent": b, "result": a ** b}
