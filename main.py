@@ -1,6 +1,16 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
+
+# Custom handler to return the exact "friendly" error message required by the assignment
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "All arguments must be valid numbers."},
+    )
 
 @app.get("/")
 def health_check():
@@ -29,7 +39,7 @@ def divide(a: float, b: float):
         raise HTTPException(status_code=400, detail="Division by zero is not allowed.")
     return {"operation": "divide", "a": a, "b": b, "result": a / b}
 
-# CUSTOM ENDPOINTS (Requirement: At least one with 3 parameters)
+# CUSTOM ENDPOINTS
 
 @app.get("/average/{a}/{b}/{c}")
 def average(a: float, b: float, c: float):
