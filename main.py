@@ -1,37 +1,48 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, HTTPException, status
 
 app = FastAPI()
 
-
-@app.get("/", status_code=200)
-def read_root():
-    """Health check endpoint"""
+@app.get("/")
+def health_check():
+    """Returns a simple health status to verify the API is running."""
     return {"status": "healthy"}
 
-
-@app.get("/add/{a}/{b}", status_code=200)
-def add(a: str, b: str):
-    """
-    Add two numbers together.
-    
-    Parameters:
-    - a: First number
-    - b: Second number
-    
-    Returns:
-    - JSON object with the result
-    """
-    
-    try:
-        a = float(a)
-        b = float(b)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
-            detail="Both 'a' and 'b' must be numbers."
-        )
-    return {"result": a + b}
+@app.get("/add/{a}/{b}")
+def add(a: float, b: float):
+    """Adds two numbers and returns the operation details."""
+    return {"operation": "add", "a": a, "b": b, "result": a + b}
 
 @app.get("/subtract/{a}/{b}")
 def subtract(a: float, b: float):
-    return {"result": a - b}
+    """Subtracts b from a and returns the operation details."""
+    return {"operation": "subtract", "a": a, "b": b, "result": a - b}
+
+@app.get("/multiply/{a}/{b}")
+def multiply(a: float, b: float):
+    """Multiplies two numbers and returns the operation details."""
+    return {"operation": "multiply", "a": a, "b": b, "result": a * b}
+
+@app.get("/divide/{a}/{b}")
+def divide(a: float, b: float):
+    """Divides a by b. Returns a 400 error if b is zero."""
+    if b == 0:
+        raise HTTPException(status_code=400, detail="Division by zero is not allowed.")
+    return {"operation": "divide", "a": a, "b": b, "result": a / b}
+
+# CUSTOM ENDPOINTS (Requirement: At least one with 3 parameters)
+
+@app.get("/average/{a}/{b}/{c}")
+def average(a: float, b: float, c: float):
+    """Calculates the average of three numbers."""
+    result = (a + b + c) / 3
+    return {"operation": "average", "a": a, "b": b, "c": c, "result": result}
+
+@app.get("/square/{a}")
+def square(a: float):
+    """Calculates the square of a number."""
+    return {"operation": "square", "a": a, "result": a ** 2}
+
+@app.get("/power/{a}/{b}")
+def power(a: float, b: float):
+    """Calculates a to the power of b."""
+    return {"operation": "power", "base": a, "exponent": b, "result": a ** b}
